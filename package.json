@@ -1,52 +1,15 @@
 {
-  "name": "claude-code-guide",
+  "name": "zenn",
   "version": "1.0.0",
-  "description": "Claude Code 完全ガイド - AI時代の開発効率化を実現する革新的ツール",
-  "private": true,
+  "main": "index.js",
   "scripts": {
-    "lint": "markdownlint articles/**/*.md --fix",
-    "lint:check": "markdownlint articles/**/*.md",
-    "toc": "markdown-toc -i articles/technical/*.md",
-    "toc:all": "npm run toc && markdown-toc -i articles/experience/*.md",
-    "preview": "grip README.md",
-    "check:links": "markdown-link-check articles/**/*.md",
-    "format": "prettier --write \"**/*.{md,json,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{md,json,yml,yaml}\"",
-    "serve": "http-server . -p 8080",
-    "build:index": "node scripts/build-index.js",
-    "validate": "npm run lint:check && npm run format:check && npm run check:links"
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "devDependencies": {
-    "markdownlint-cli": "^0.39.0",
-    "markdown-toc": "^1.2.0",
-    "markdown-link-check": "^3.12.1",
-    "prettier": "^3.2.4",
-    "http-server": "^14.1.1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/yourusername/claude-code-guide.git"
-  },
-  "keywords": [
-    "claude-code",
-    "ai",
-    "development",
-    "automation",
-    "dx",
-    "prompt-engineering"
-  ],
-  "author": "Shunsuke Hayashi",
-  "license": "MIT",
-  "markdownlint": {
-    "default": true,
-    "MD013": false,
-    "MD033": false,
-    "MD041": false
-  },
-  "prettier": {
-    "printWidth": 100,
-    "proseWrap": "preserve",
-    "tabWidth": 2,
-    "useTabs": false
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": "",
+  "dependencies": {
+    "zenn-cli": "^0.1.159"
   }
 }

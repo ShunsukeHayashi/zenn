@@ -33,3 +33,6 @@ build/
 # Claude specific
 .claude/
 *.claude-backup
+
+# SpecStory explanation file
+.specstory/.what-is-this.md
