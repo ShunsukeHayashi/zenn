@@ -36,3 +36,7 @@ build/
 
 # SpecStory explanation file
 .specstory/.what-is-this.md
+
+# Ulysses editor files
+.Ulysses-*
+*.ulysses
