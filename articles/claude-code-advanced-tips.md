@@ -1,6 +1,6 @@
 ---
-title: "【上級編】Claude Codeの知られざる活用法｜同時並列作業とカスタムコマンドで生産性爆上げ"
-emoji: "🔥"
+title: "【爆速テク】Claude Code並列処理で生産性1.5倍！Git worktree+カスタムコマンド完全攻略"
+emoji: "⚡"
 type: "tech"
 topics: ["claudecode", "git", "生産性向上", "カスタマイズ", "worktree"]
 published: true
@@ -14,7 +14,7 @@ published: true
 
 特に「Git worktree」と「カスタムスラッシュコマンド」は、知ってるか知らないかで作業効率が全然変わります！
 
-## 発見のきっかけ：「2つのプロジェクトを同時に進めたい」
+## 🎯 【発見】同時並行開発の革新的手法
 
 先月こんな状況になりました：
 
