@@ -182,6 +182,23 @@ A: Claude CodeはClaude Pro（$20/月）またはMaxプラン（$100〜/月）�
 2. プロジェクト固有の設定を充実させる
 3. 効果を測定して改善
 
+## 🎓 より深く学びたい方へ
+
+Claude Codeを効果的に活用するには、**プロンプトエンジニアリングの基礎理論**を理解することが重要です。
+
+### 📚 体系的な学習リソース
+**[プロンプトエンジニアリングガイド](https://shusukes-organization.gitbook.io/shunsukepuronputodezain/)**では、Claude Codeで使用する高度なプロンプト技法の理論的背景を詳しく解説しています：
+
+- **Chain-of-Thought プロンプティング**: 段階的思考を促す手法
+- **Few-shot プロンプティング**: 例示による学習誘導
+- **Role Playing**: 役割設定による出力品質向上
+- **コンテキスト設計**: CLAUDE.mdファイルの最適化理論
+
+### 🔗 学習の進め方
+1. **理論学習**: [GitBookガイド](https://shusukes-organization.gitbook.io/shunsukepuronputodezain/)でプロンプトエンジニアリング基礎
+2. **実践応用**: この記事シリーズでClaude Code活用法
+3. **統合活用**: 理論と実践を組み合わせた高度な開発
+
 ## 最後に
 
 Claude Codeは「道具」じゃなくて「パートナー」だと思っています。最初は戸惑うけど、慣れると手放せなくなります。
