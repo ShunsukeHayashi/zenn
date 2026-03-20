@@ -16,6 +16,24 @@ published: true
 
 本番で42エージェントを動かし続けて痛感したのは、**スキルは静かに劣化する**ということです。
 
+```mermaid
+graph LR
+    subgraph Before["導入前：見えない劣化"]
+        S1["Week 1<br/>スコア 0.95"] --> S2["Week 2<br/>スコア 0.80"]
+        S2 --> S3["Week 3<br/>スコア 0.40"]
+        S3 --> S4["Week 4<br/>💥 障害発覚"]
+    end
+
+    subgraph After["導入後：早期検知"]
+        A1["Week 1<br/>スコア 0.95"] --> A2["Week 2<br/>スコア 0.80"]
+        A2 --> A3["⚡ 劣化検知<br/>自動修復"]
+        A3 --> A4["Week 3<br/>スコア 0.90 ✅"]
+    end
+
+    style Before fill:#fef2f2,stroke:#ef4444
+    style After fill:#f0fdf4,stroke:#16a34a
+```
+
 具体的にはこういうことが起きます。
 
 外部APIの仕様が変わる。モデルのアップデートで出力フォーマットが微妙にずれる。認証トークンが期限切れになる。エージェント自体は「動いている」ように見えるのに、品質スコアが3週間かけて0.95から0.40に下がっていく。
@@ -30,26 +48,47 @@ published: true
 
 この3つの課題を解決するために作ったのが [agent-skill-bus](https://github.com/ShunsukeHayashi/agent-skill-bus) です。
 
-```
-                  ┌──────────────────────────────┐
-  外部変化         │        Knowledge Watcher       │
-  ・API変更        │  npm audit / APIチェック等     │
-  ・依存更新  ────▶│  変化検知 → 修復リクエスト投入  │
-                  └────────────┬─────────────────┘
-                               │ 修復タスク
-                               ▼
-  エージェントA ──▶  ┌──────────────────────────┐
-  エージェントB ──▶  │    Prompt Request Bus      │  ◀── エージェントC
-  エージェントD ──▶  │  DAGキュー / ファイルロック  │
-                  │  優先度ルーティング            │
-                  └────────────┬─────────────────┘
-                               │ 実行 & スコア収集
-                               ▼
-                  ┌──────────────────────────────┐
-                  │    Self-Improving Skills       │
-                  │  品質監視 → 劣化検知           │
-                  │  → 自動修復 or 人間エスカレ    │
-                  └──────────────────────────────┘
+```mermaid
+graph TD
+    subgraph External["外部変化"]
+        API["API仕様変更"]
+        DEP["依存パッケージ更新"]
+        MODEL["モデルアップデート"]
+    end
+
+    subgraph KW["Knowledge Watcher"]
+        DETECT["変化検知・差分分析"]
+    end
+
+    subgraph BUS["Prompt Request Bus"]
+        DAG["DAGキュー"]
+        LOCK["ファイルロック"]
+        ROUTE["優先度ルーティング"]
+    end
+
+    subgraph SI["Self-Improving Skills"]
+        MONITOR["品質監視"]
+        DRIFT["劣化検知"]
+        REPAIR["自動修復 / エスカレーション"]
+    end
+
+    API --> DETECT
+    DEP --> DETECT
+    MODEL --> DETECT
+    DETECT -->|修復タスク投入| DAG
+
+    A["Agent A"] --> DAG
+    B["Agent B"] --> DAG
+    C["Agent C"] --> DAG
+
+    DAG --> LOCK --> ROUTE
+    ROUTE -->|実行 & スコア収集| MONITOR
+    MONITOR --> DRIFT --> REPAIR
+    REPAIR -->|改善タスク| DAG
+
+    style KW fill:#7c3aed,color:#fff
+    style BUS fill:#2563eb,color:#fff
+    style SI fill:#16a34a,color:#fff
 ```
 
 ### 1. Prompt Request Bus（DAGタスクキュー）
@@ -78,11 +117,31 @@ const task = await bus.dequeue({ agentId: 'analyzer' });
 
 ### 2. Self-Improving Skills（スキル品質モニタリング）
 
-7ステップの自己改善ループです。
+7ステップの自己改善ループです。スコアが閾値を下回ると、自動で原因分析→修復提案→適用まで回ります。
 
+```mermaid
+graph LR
+    O["1. OBSERVE<br/>スコア収集"] --> A["2. ANALYZE<br/>トレンド分析"]
+    A --> D["3. DIAGNOSE<br/>原因特定"]
+    D --> P["4. PROPOSE<br/>修復案生成"]
+    P --> E["5. EVALUATE<br/>リスク判定"]
+    E --> AP["6. APPLY<br/>自動適用"]
+    AP --> R["7. RECORD<br/>結果記録"]
+    R -.->|次サイクル| O
+
+    style O fill:#f59e0b,color:#fff
+    style A fill:#f59e0b,color:#fff
+    style D fill:#ef4444,color:#fff
+    style P fill:#8b5cf6,color:#fff
+    style E fill:#8b5cf6,color:#fff
+    style AP fill:#16a34a,color:#fff
+    style R fill:#16a34a,color:#fff
 ```
-OBSERVE → ANALYZE → DIAGNOSE → PROPOSE → EVALUATE → APPLY → RECORD
-```
+
+- **OBSERVE〜ANALYZE**: スコアを時系列で集め、週次トレンドを計算
+- **DIAGNOSE**: 閾値割れの根本原因を特定（API変更？モデル更新？データドリフト？）
+- **PROPOSE〜EVALUATE**: 修復案を生成し、リスクレベルで自動適用か人間エスカレーションか判断
+- **APPLY〜RECORD**: 低リスクなら自動適用、結果をJSONLに永続化
 
 ```typescript
 import { SelfImprovingSkill } from 'agent-skill-bus';
@@ -143,6 +202,30 @@ import { PromptRequestBus } from 'agent-skill-bus';
 const bus = new PromptRequestBus('./my-queue');
 await bus.enqueue({ id: 'task-1', prompt: 'こんにちは' });
 const task = await bus.dequeue({ agentId: 'my-agent' });
+```
+
+## どのモジュールから始めるか
+
+3モジュールは独立しているので、自分の課題に合わせて1つだけ導入できます。
+
+```mermaid
+graph TD
+    Q{"あなたの課題は？"}
+    Q -->|タスクが競合する<br/>依存関係を整理したい| BUS["Prompt Request Bus<br/>DAGキュー + ファイルロック"]
+    Q -->|スキルの品質が<br/>劣化していく| SI["Self-Improving Skills<br/>7ステップ自己改善ループ"]
+    Q -->|外部APIやパッケージの<br/>変更に追いつけない| KW["Knowledge Watcher<br/>変更検知 + 自動修復"]
+    Q -->|全部| ALL["3モジュール統合"]
+
+    BUS --> START["npm install agent-skill-bus"]
+    SI --> START
+    KW --> START
+    ALL --> START
+
+    style Q fill:#6366f1,color:#fff
+    style BUS fill:#2563eb,color:#fff
+    style SI fill:#16a34a,color:#fff
+    style KW fill:#7c3aed,color:#fff
+    style ALL fill:#dc2626,color:#fff
 ```
 
 ## 3日で35スター、83%がXのエンジニア経由
