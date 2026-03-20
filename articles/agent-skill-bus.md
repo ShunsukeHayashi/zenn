@@ -193,20 +193,9 @@ npm install agent-skill-bus
 npx agent-skill-bus init
 ```
 
-3モジュールは独立しているのでそれぞれ単体でも使えます。
-
-```typescript
-// 最小構成: タスクキューだけ使う
-import { PromptRequestBus } from 'agent-skill-bus';
-
-const bus = new PromptRequestBus('./my-queue');
-await bus.enqueue({ id: 'task-1', prompt: 'こんにちは' });
-const task = await bus.dequeue({ agentId: 'my-agent' });
-```
-
 ## どのモジュールから始めるか
 
-3モジュールは独立しているので、自分の課題に合わせて1つだけ導入できます。
+3モジュールは独立しているので、自分の課題に合わせて**1つだけ**導入できます。
 
 ```mermaid
 graph TD
