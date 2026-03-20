@@ -145,8 +145,6 @@ await bus.enqueue({ id: 'task-1', prompt: 'こんにちは' });
 const task = await bus.dequeue({ agentId: 'my-agent' });
 ```
 
-GitHub: https://github.com/ShunsukeHayashi/agent-skill-bus
-
 ## 3日で35スター、83%がXのエンジニア経由
 
 公開から3日で35スターをいただきました。流入元を見ると83%がX（旧Twitter）経由で、エンジニアのリツイートが連鎖した形でした。
@@ -170,3 +168,23 @@ LangChain、BullMQ、Redis——どれも優れたツールですが、「どん
 マルチエージェントを本番運用している方、スキルの劣化や競合で困っている方にとって少しでも参考になれば幸いです。
 
 Issue や PR もお待ちしています。
+
+## リンク集
+
+| リソース | URL |
+|---------|-----|
+| **GitHub** | [ShunsukeHayashi/agent-skill-bus](https://github.com/ShunsukeHayashi/agent-skill-bus) |
+| **npm** | [agent-skill-bus](https://www.npmjs.com/package/agent-skill-bus) |
+| **Examples** | [examples/](https://github.com/ShunsukeHayashi/agent-skill-bus/tree/master/examples) |
+| **TypeScript型定義** | [types/index.d.ts](https://github.com/ShunsukeHayashi/agent-skill-bus/blob/master/types/index.d.ts) |
+| **他フレームワークとの比較** | [docs/comparison.md](https://github.com/ShunsukeHayashi/agent-skill-bus/blob/master/docs/comparison.md) |
+| **Contributing** | [CONTRIBUTING.md](https://github.com/ShunsukeHayashi/agent-skill-bus/blob/master/CONTRIBUTING.md) |
+| **ライセンス** | MIT |
+
+### 関連リソース
+
+- [LangGraph](https://github.com/langchain-ai/langgraph) — LangChainベースのエージェントグラフ構築
+- [CrewAI](https://github.com/crewAIInc/crewAI) — ロールベースのマルチエージェントフレームワーク
+- [AutoGen](https://github.com/microsoft/autogen) — Microsoftのマルチエージェント会話フレームワーク
+- [VoltAgent](https://github.com/VoltAgent/voltagent) — TypeScriptエージェントフレームワーク
+- [awesome-agent-skills](https://github.com/VoltAgent/awesome-agent-skills) — エージェントスキルのキュレーションリスト
