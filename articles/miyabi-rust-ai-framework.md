@@ -3,7 +3,7 @@ title: "Rust製AIフレームワーク『Miyabi』で実現する完全自動化
 emoji: "🌸"
 type: "tech"
 topics: ["rust", "github", "ai", "automation", "devops"]
-published: false
+published: true
 ---
 
 ## 🎯 はじめに - 「開発の自動化」の理想と現実
